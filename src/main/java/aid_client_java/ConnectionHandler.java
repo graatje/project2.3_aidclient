@@ -13,6 +13,7 @@ public class ConnectionHandler {
     private DataInputStream in;
     private final String PASSWORD = "HelloWorld";
     public int boardint = 0;
+    public int slowdown = 0;
     public ConnectionHandler(String ip, int port) throws IOException{
 
             clientSocket = new Socket(ip, port);
@@ -41,11 +42,16 @@ public class ConnectionHandler {
     public Simulator receiveBoard(){
 
         JSONObject response = read();
-        this.boardint = response.getInt("boardint");
+
         if(!response.get("type").equals("sendboard")){
+            if(response.get("type").equals("slowdown")) {
+                System.out.println("server asked to slow down.");
+                this.slowdown += response.getInt("amount");
+            }
             System.out.println("no simulation.");
             return null;
         }
+        this.boardint = response.getInt("boardint");
         Board board = new Board();
         JSONObject jsonboard = response.getJSONObject("board");
         int owner;
@@ -54,7 +60,7 @@ public class ConnectionHandler {
             board.getBoardPiece(Integer.parseInt(key) % 8, Integer.parseInt(key) / 8).setOwner(owner);
         }
         board.printBoard();
-        return new Simulator(board, (Integer) response.get("turn"), response.getInt("thinkingtime"));
+        return new Simulator(board, (Integer) response.get("turn"), response.getInt("thinkingtime") - slowdown);
     }
 
     public JSONObject read(){
