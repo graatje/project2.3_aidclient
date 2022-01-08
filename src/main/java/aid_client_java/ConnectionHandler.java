@@ -13,14 +13,12 @@ public class ConnectionHandler {
     private DataInputStream in;
     private final String PASSWORD = "HelloWorld";
 
-    public ConnectionHandler(String ip, int port){
-        try {
+    public ConnectionHandler(String ip, int port) throws IOException{
+
             clientSocket = new Socket(ip, port);
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new DataInputStream(clientSocket.getInputStream());
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+
         login();
     }
 
@@ -95,12 +93,8 @@ public class ConnectionHandler {
             arr.put(results);
         }
         resp.put("results", arr);
+        System.out.println("Result now sent!");
         out.write(resp.toString() + "\n");
         out.flush();
-    }
-    public static void main(String[] args){
-        ConnectionHandler c = new ConnectionHandler("127.0.0.1", 5000);
-        c.receiveBoard().simulateGames();
-        System.out.println("simulation done.");
     }
 }

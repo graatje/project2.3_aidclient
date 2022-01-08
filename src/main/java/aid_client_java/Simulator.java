@@ -97,6 +97,10 @@ public class Simulator {
     }
 
     public float evaluateBoard(Board board){
+        return evaluateBoardMethod3(board);
+    }
+
+    private float evaluateBoardMethod1(Board board){
         int selfPieces = 0, otherPieces = 0;
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
@@ -118,6 +122,36 @@ public class Simulator {
             value += (float) (selfPieces - otherPieces) / (selfPieces + otherPieces);
         }
         return value;
+    }
+
+    private float evaluateBoardMethod2(Board board){
+        float selfPieces = 0, otherPieces = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                int owner = board.getBoardPiece(x, y).getOwner();
+                if (owner == startingPlayer) {  //always self
+                    selfPieces += PIECE_WEIGHTS[x][y];
+                } else if (owner == getOtherPlayer(startingPlayer)) {
+                    otherPieces += PIECE_WEIGHTS[x][y];
+                }
+            }
+        }
+        return selfPieces - otherPieces;
+    }
+
+    private float evaluateBoardMethod3(Board board){
+        float selfPieces = 0, otherPieces = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                int owner = board.getBoardPiece(x, y).getOwner();
+                if (owner == startingPlayer) {  //always self
+                    selfPieces += 1;
+                } else if (owner == getOtherPlayer(startingPlayer)) {
+                    otherPieces += 1;
+                }
+            }
+        }
+        return selfPieces - otherPieces;
     }
 
     private int getOtherPlayer(int player){
