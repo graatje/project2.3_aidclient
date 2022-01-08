@@ -12,7 +12,7 @@ public class ConnectionHandler {
     private PrintWriter out;
     private DataInputStream in;
     private final String PASSWORD = "HelloWorld";
-
+    public int boardint = 0;
     public ConnectionHandler(String ip, int port) throws IOException{
 
             clientSocket = new Socket(ip, port);
@@ -39,7 +39,9 @@ public class ConnectionHandler {
     }
 
     public Simulator receiveBoard(){
+
         JSONObject response = read();
+        this.boardint = response.getInt("boardint");
         if(!response.get("type").equals("sendboard")){
             System.out.println("no simulation.");
             return null;
@@ -52,7 +54,7 @@ public class ConnectionHandler {
             board.getBoardPiece(Integer.parseInt(key) % 8, Integer.parseInt(key) / 8).setOwner(owner);
         }
         board.printBoard();
-        return new Simulator(board, (Integer) response.get("turn"));
+        return new Simulator(board, (Integer) response.get("turn"), response.getInt("thinkingtime"));
     }
 
     public JSONObject read(){
@@ -75,11 +77,15 @@ public class ConnectionHandler {
     }
 
     public void sendResult(ArrayList<SimulationResult> simulationResults){
+        sendResult(simulationResults, this.boardint);
+    }
+
+    public void sendResult(ArrayList<SimulationResult> simulationResults, int boardint){
         JSONObject resp = new JSONObject();
         JSONObject move;
         JSONObject results;
         resp.put("type", "reportResult");
-
+        resp.put("boardint", boardint);
         JSONArray arr = new JSONArray();
         for(SimulationResult r: simulationResults){
             results = new JSONObject();

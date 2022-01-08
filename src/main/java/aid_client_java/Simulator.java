@@ -20,7 +20,7 @@ public class Simulator {
     int startingPlayer;
     final HashMap<BoardPiece, ArrayList<Float>> vals;
     private final static int CORES = 4;
-    private final static int thinktime = 8000;
+    private int thinktime = 8000;
 
     public Simulator(Board board, int startingPlayer){
         this.board = board;
@@ -32,6 +32,13 @@ public class Simulator {
             }
         }
     }
+
+    public Simulator(Board board, int startingPlayer, int thinktime){
+        this(board, startingPlayer);
+        System.out.println("time to think about move: " + thinktime);
+        this.thinktime = thinktime;
+    }
+
     public ArrayList<SimulationResult> startSimulations(){
 
         for(int i = 0; i < CORES; i++){
