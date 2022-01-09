@@ -55,7 +55,7 @@ public class ConnectionHandler {
             board.getBoardPiece(Integer.parseInt(key) % 8, Integer.parseInt(key) / 8).setOwner(owner);
         }
         return new Simulator(board, (Integer) response.get("turn"),
-                response.getInt("thinkingtime"));
+                response.getInt("thinkingtime") - ConfigData.getInstance().getReducedThinkTime());
     }
 
     public JSONObject read(){

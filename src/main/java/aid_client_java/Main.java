@@ -7,7 +7,8 @@ public class Main {
     public Main(){
         while(true) {
             try {
-                this.connectionHandler = new ConnectionHandler("127.0.0.1", 5000);
+                this.connectionHandler = new ConnectionHandler(ConfigData.getInstance().getServerIP(),
+                        ConfigData.getInstance().getPort());
                 break;
             }catch (IOException ignored){
                 System.out.println("failed to connect to client.");
