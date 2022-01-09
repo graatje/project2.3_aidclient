@@ -56,11 +56,11 @@ public class ConnectionHandler {
         JSONObject jsonboard = response.getJSONObject("board");
         int owner;
         for(String key: jsonboard.keySet()){
-            owner = Integer.parseInt((String) jsonboard.get(key));
+            owner = jsonboard.getInt(key);
             board.getBoardPiece(Integer.parseInt(key) % 8, Integer.parseInt(key) / 8).setOwner(owner);
         }
-        board.printBoard();
-        return new Simulator(board, (Integer) response.get("turn"), response.getInt("thinkingtime") - slowdown);
+        return new Simulator(board, (Integer) response.get("turn"),
+                response.getInt("thinkingtime") - slowdown);
     }
 
     public JSONObject read(){
@@ -96,17 +96,34 @@ public class ConnectionHandler {
         for(SimulationResult r: simulationResults){
             results = new JSONObject();
             results.put("value", String.valueOf(r.average));
-            results.put("trials", String.valueOf(r.amount));
+            results.put("trials", r.amount);
 
             move = new JSONObject();
-            move.put("x", String.valueOf(r.move.getX()));
-            move.put("y", String.valueOf(r.move.getY()));
+            move.put("x", r.move.getX());
+            move.put("y", r.move.getY());
             results.put("move", move);
             arr.put(results);
         }
         resp.put("results", arr);
-        System.out.println("Result now sent!");
         out.write(resp.toString() + "\n");
         out.flush();
+
+
+        // since result of simulation is now done, we print some info about the simulation.
+        BoardPiece bestMove = null;
+        float highestAvg = Float.MIN_VALUE;
+        int simulatedMatches = 0;
+        for(SimulationResult r: simulationResults){
+            simulatedMatches += r.amount;
+            if(r.average > highestAvg){
+                highestAvg = r.average;
+                bestMove = r.move;
+            }
+        }
+        if(bestMove == null){
+            return;
+        }
+        System.out.println("Simulated " + simulatedMatches + " matches for board " + boardint + ". " +
+                "Found best move at x: " + bestMove.x + ", y: " + bestMove.y + " with a value of " + highestAvg);
     }
 }

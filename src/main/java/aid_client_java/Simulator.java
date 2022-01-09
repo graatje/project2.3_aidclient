@@ -35,7 +35,6 @@ public class Simulator {
 
     public Simulator(Board board, int startingPlayer, int thinktime){
         this(board, startingPlayer);
-        System.out.println("time to think about move: " + thinktime);
         this.thinktime = thinktime;
     }
 
