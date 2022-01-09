@@ -13,7 +13,6 @@ public class ConnectionHandler {
     private DataInputStream in;
     private final String PASSWORD = "HelloWorld";
     public int boardint = 0;
-    public int slowdown = 0;
     public ConnectionHandler(String ip, int port) throws IOException{
 
             clientSocket = new Socket(ip, port);
@@ -44,10 +43,6 @@ public class ConnectionHandler {
         JSONObject response = read();
 
         if(!response.get("type").equals("sendboard")){
-            if(response.get("type").equals("slowdown")) {
-                System.out.println("server asked to slow down.");
-                this.slowdown += response.getInt("amount");
-            }
             System.out.println("no simulation.");
             return null;
         }
@@ -60,7 +55,7 @@ public class ConnectionHandler {
             board.getBoardPiece(Integer.parseInt(key) % 8, Integer.parseInt(key) / 8).setOwner(owner);
         }
         return new Simulator(board, (Integer) response.get("turn"),
-                response.getInt("thinkingtime") - slowdown);
+                response.getInt("thinkingtime"));
     }
 
     public JSONObject read(){
@@ -105,9 +100,10 @@ public class ConnectionHandler {
             arr.put(results);
         }
         resp.put("results", arr);
+
         out.write(resp.toString() + "\n");
         out.flush();
-
+        System.out.println("sent to server: " + resp);
 
         // since result of simulation is now done, we print some info about the simulation.
         BoardPiece bestMove = null;
@@ -121,6 +117,7 @@ public class ConnectionHandler {
             }
         }
         if(bestMove == null){
+            System.out.println("how can bestmove be null");
             return;
         }
         System.out.println("Simulated " + simulatedMatches + " matches for board " + boardint + ". " +
