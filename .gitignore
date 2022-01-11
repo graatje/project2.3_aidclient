@@ -1,3 +1,9 @@
 .idea/
 
 target/
+
+config.json
+
+out/
+
+src/main/resources/

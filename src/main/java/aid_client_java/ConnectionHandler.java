@@ -11,7 +11,6 @@ public class ConnectionHandler {
     private Socket clientSocket;
     private PrintWriter out;
     private DataInputStream in;
-    private final String PASSWORD = "HelloWorld";
     public int boardint = 0;
     public ConnectionHandler(String ip, int port) throws IOException{
 
@@ -25,23 +24,28 @@ public class ConnectionHandler {
     public void login(){
         JSONObject logindata = new JSONObject();
         logindata.put("type", "initialize");
-        logindata.put("password", PASSWORD);
-
-            out.println(logindata.toString() + "\n");
-            out.flush();
-            JSONObject response = read();
-            if(response.get("type").equals("initialize") && response.get("msg").equals("success!")){
-                System.out.println("logged in.");
-            }else{
-                System.out.println(response.get("msg"));
-            }
+        logindata.put("password", ConfigData.getInstance().getPassword());
+        if(ConfigData.getInstance().getName() != null) {
+            logindata.put("name", ConfigData.getInstance().getName());
+        }
+        out.println(logindata.toString() + "\n");
+        out.flush();
+        JSONObject response = read();
+        if(response.get("type").equals("initialize") && response.get("msg").equals("success!")){
+            System.out.println("logged in.");
+        }else{
+            System.out.println(response.get("msg"));
+        }
 
     }
 
     public Simulator receiveBoard(){
 
         JSONObject response = read();
-
+        if(response == null){
+            System.out.println("response when reading was null.");
+            return null;
+        }
         if(!response.get("type").equals("sendboard")){
             System.out.println("no simulation.");
             return null;
@@ -107,9 +111,10 @@ public class ConnectionHandler {
 
         // since result of simulation is now done, we print some info about the simulation.
         BoardPiece bestMove = null;
-        float highestAvg = Float.MIN_VALUE;
+        float highestAvg = Float.NEGATIVE_INFINITY;
         int simulatedMatches = 0;
         for(SimulationResult r: simulationResults){
+            System.out.println("iterating through simulationresults.");
             simulatedMatches += r.amount;
             if(r.average > highestAvg){
                 highestAvg = r.average;
@@ -117,7 +122,7 @@ public class ConnectionHandler {
             }
         }
         if(bestMove == null){
-            System.out.println("how can bestmove be null");
+            System.out.println("error, bestmove was null");
             return;
         }
         System.out.println("Simulated " + simulatedMatches + " matches for board " + boardint + ". " +
