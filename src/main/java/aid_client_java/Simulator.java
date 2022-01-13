@@ -160,6 +160,27 @@ public class Simulator {
         return selfPieces - otherPieces;
     }
 
+    private float evaluateBoardMethod4(Board board){
+        float selfPieces = 0, otherPieces = 0;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                int owner = board.getBoardPiece(x, y).getOwner();
+                if (owner == startingPlayer) {  //always self
+                    selfPieces += 1;
+                } else if (owner == getOtherPlayer(startingPlayer)) {
+                    otherPieces += 1;
+                }
+            }
+        }
+        if(selfPieces - otherPieces > 0){
+            return 1;
+        }
+        else if(otherPieces - selfPieces < 0){
+            return -1;
+        }
+        return 0;
+    }
+
     private int getOtherPlayer(int player){
         if(player == 0){
             return 1;
