@@ -175,7 +175,7 @@ public class Simulator {
         if(selfPieces - otherPieces > 0){
             return 1;
         }
-        else if(otherPieces - selfPieces < 0){
+        else if(selfPieces - otherPieces < 0){
             return -1;
         }
         return 0;
