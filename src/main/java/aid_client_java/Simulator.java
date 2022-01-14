@@ -19,10 +19,10 @@ public class Simulator {
     Board board;
     int startingPlayer;
     final HashMap<BoardPiece, ArrayList<Float>> vals;
-    private final static int CORES = 4;
-    private int thinktime = 8000;
+    private int thinktime;
 
     public Simulator(Board board, int startingPlayer){
+        this.thinktime = 8000;
         this.board = board;
         this.startingPlayer = startingPlayer;
         vals = new HashMap<BoardPiece, ArrayList<Float>>();
@@ -40,7 +40,7 @@ public class Simulator {
 
     public ArrayList<SimulationResult> startSimulations(){
 
-        for(int i = 0; i < CORES; i++){
+        for(int i = 0; i < ConfigData.getInstance().getCores(); i++){
             Thread t = new Thread(this::simulateGames);
             t.start();
         }
@@ -103,7 +103,7 @@ public class Simulator {
     }
 
     public float evaluateBoard(Board board){
-        return evaluateBoardMethod3(board);
+        return evaluateBoardMethod4(board);
     }
 
     private float evaluateBoardMethod1(Board board){

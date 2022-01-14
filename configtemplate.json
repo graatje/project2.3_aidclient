@@ -3,5 +3,6 @@
   "port": 5000,
   "reducedthinktime": 200,
   "name": "kevin",
-  "password": "HelloWorld"
+  "password": "HelloWorld",
+  "cores": 4
 }

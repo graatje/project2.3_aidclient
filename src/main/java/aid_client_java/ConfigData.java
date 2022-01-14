@@ -11,7 +11,7 @@ public class ConfigData {
     private int port;
     private int reducedThinkTime;
     private String password;
-
+    private int cores;
 
     private String name;
 
@@ -24,12 +24,12 @@ public class ConfigData {
 
     private ConfigData(){
         JSONObject config = readConfig("config.json");
-
         this.serverIP = "127.0.0.1";
         this.port = 5000;
         this.reducedThinkTime = 200;
         this.name = "Kevin";
         this.password = "HelloWorld";
+        this.cores = 4;
         if(config == null){
             return;
         }
@@ -47,6 +47,10 @@ public class ConfigData {
         }
         if(config.has("password")){
             this.password = config.getString("password");
+        }
+
+        if(config.has("cores")){
+            this.cores = config.getInt("cores");
         }
     }
 
@@ -105,6 +109,14 @@ public class ConfigData {
 
     public void setReducedThinkTime(int reducedThinkTime) {
         this.reducedThinkTime = reducedThinkTime;
+    }
+
+    public int getCores() {
+        return cores;
+    }
+
+    public void setCores(int cores) {
+        this.cores = cores;
     }
 }
 
