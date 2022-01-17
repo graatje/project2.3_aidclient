@@ -38,10 +38,31 @@ public class ConnectionHandler {
         }
 
     }
-
-    public Simulator receiveBoard(){
-
+    public void handleServerInput(){
         JSONObject response = read();
+        if(!response.has("type")){
+            return;
+        }
+        String type = response.getString("type");
+        switch (type) {
+            case "sendboard" -> {
+                Simulator s = receiveBoard(response);
+                if (s != null) {
+                    sendResult(s.startSimulations());
+                }
+            }
+            case "ping" -> {
+                System.out.println("Wrote " + response.toString());
+                out.write(response.toString() + "\n");
+                out.flush();
+            }
+            default -> System.out.println("received type " + type);
+        }
+    }
+
+    public Simulator receiveBoard(JSONObject response){
+
+
         if(response == null){
             System.out.println("response when reading was null.");
             return null;
@@ -109,12 +130,11 @@ public class ConnectionHandler {
         out.flush();
         System.out.println("sent to server: " + resp);
 
-        // since result of simulation is now done, we print some info about the simulation.
+        // since result of simulation is now done and sent, we print some info about the simulation.
         BoardPiece bestMove = null;
         float highestAvg = Float.NEGATIVE_INFINITY;
         int simulatedMatches = 0;
         for(SimulationResult r: simulationResults){
-            System.out.println("iterating through simulationresults.");
             simulatedMatches += r.amount;
             if(r.average > highestAvg){
                 highestAvg = r.average;

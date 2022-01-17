@@ -15,10 +15,7 @@ public class Main {
             }
         }
         while(true){
-            Simulator s = connectionHandler.receiveBoard();
-            if(s != null) {
-                connectionHandler.sendResult(s.startSimulations());
-            }
+            connectionHandler.handleServerInput();
         }
     }
 
